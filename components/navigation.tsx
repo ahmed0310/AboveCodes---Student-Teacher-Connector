@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { motion } from "motion/react";
 import { Menu, X, Code } from "lucide-react";
+import React from "react";
 
 type Page = "home" | "coding" | "math" | "abacus" | "uxui" | "contact";
 

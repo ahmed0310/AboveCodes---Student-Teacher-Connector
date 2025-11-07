@@ -22,6 +22,7 @@ import {
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { PricingTiers } from "./pricing-tiers";
 import codingKidsImage from "figma:asset/300a53e98355fbe0357cb9d38cc40126c1b26d4f.png";
+import React from "react";
 
 interface CodingProgramPageProps {
   onNavigate?: (page: "contact") => void;

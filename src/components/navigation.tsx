@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Button } from "./ui/button";
 import { motion } from "motion/react";
 import { Menu, X, Code } from "lucide-react";
+import React from "react";
 
 type Page = "home" | "coding" | "math" | "abacus" | "uxui" | "contact";
 
@@ -38,7 +39,7 @@ export function Navigation({ onNavigate }: NavigationProps) {
           </motion.div>
 
           {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+          {/* <div className="hidden md:flex items-center space-x-8">
             {navLinks.map((link, index) => (
               <motion.a
                 key={link.name}
@@ -58,7 +59,30 @@ export function Navigation({ onNavigate }: NavigationProps) {
                 <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
               </motion.a>
             ))}
-          </div>
+          </div> */}
+
+<div className="hidden md:flex items-center space-x-8">
+  {navLinks.map((link, index) => (
+    <motion.a
+      key={link.name}
+      href={link.href}
+      onClick={(e) => {
+        if (onNavigate && link.page) {
+          e.preventDefault();
+          onNavigate(link.page);
+        }
+      }}
+      className="text-gray-700 hover:text-blue-600 transition-colors duration-200 relative group cursor-pointer"
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5, delay: index * 0.1 }}
+    >
+      {link.name}
+      <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-blue-600 transition-all duration-200 group-hover:w-full"></span>
+    </motion.a>
+  ))}
+</div>
+
 
           {/* Desktop CTA Button */}
           <motion.div 

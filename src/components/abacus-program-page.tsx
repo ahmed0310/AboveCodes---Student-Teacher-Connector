@@ -22,6 +22,7 @@ import {
 } from "lucide-react";
 import { ImageWithFallback } from "./figma/ImageWithFallback";
 import { PricingTiers } from "./pricing-tiers";
+import React from "react";
 
 interface AbacusProgramPageProps {
   onNavigate?: (page: "contact") => void;
