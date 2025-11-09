@@ -8,6 +8,7 @@ import { WhyChooseSection } from "./components/why-choose-section";
 import { TestimonialsSection } from "./components/testimonials-section";
 import { CTASection } from "./components/cta-section";
 import { Footer } from "./components/footer";
+import { ContactPage } from "./components/contact-page";
 
 export default function App() {
   return (
@@ -16,15 +17,23 @@ export default function App() {
       <FeaturesBanner />
       <main>
         <HeroSection />
+
         <section id="about">
           <AboutSection />
         </section>
+
         <section id="programs">
           <ProgramsSection />
         </section>
+
         <section id="why-choose">
           <WhyChooseSection />
         </section>
+
+        <section id="contactsection">
+          <ContactPage />
+        </section>
+
         <TestimonialsSection />
         <CTASection />
       </main>

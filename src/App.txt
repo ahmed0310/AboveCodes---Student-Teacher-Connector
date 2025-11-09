@@ -1,0 +1,13 @@
+// import { jsx as _jsx, jsxs as _jsxs } from "react/jsx-runtime";
+// import { Navigation } from "./components/navigation";
+// import { FeaturesBanner } from "./components/features-banner";
+// import { HeroSection } from "./components/hero-section";
+// import { AboutSection } from "./components/about-section";
+// import { ProgramsSection } from "./components/programs-section";
+// import { WhyChooseSection } from "./components/why-choose-section";
+// import { TestimonialsSection } from "./components/testimonials-section";
+// import { CTASection } from "./components/cta-section";
+// import { Footer } from "./components/footer";
+// export default function App() {
+//     return (_jsxs("div", { className: "min-h-screen bg-white", children: [_jsx(Navigation, {}), _jsx(FeaturesBanner, {}), _jsxs("main", { children: [_jsx(HeroSection, {}), _jsx("section", { id: "about", children: _jsx(AboutSection, {}) }), _jsx("section", { id: "programs", children: _jsx(ProgramsSection, {}) }), _jsx("section", { id: "why-choose", children: _jsx(WhyChooseSection, {}) }), _jsx(TestimonialsSection, {}), _jsx(CTASection, {})] }), _jsx(Footer, {})] }));
+// }

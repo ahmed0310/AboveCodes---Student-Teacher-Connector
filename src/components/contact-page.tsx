@@ -6,8 +6,13 @@ import { Textarea } from './ui/textarea';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Label } from './ui/label';
 import { Card } from './ui/card';
-import { motion } from 'motion/react';
-import styles from './contact-section.module.css';
+// 👇 FIX: Corrected import for framer-motion
+import { motion } from 'framer-motion';
+// 👆 FIX: Corrected import for framer-motion
+
+// 👇 FIX: Removed unused CSS module import that was causing an error
+// import styles from './contact-section.module.css';
+// 👆 FIX: Removed unused CSS module import that was causing an error
 
 interface FormData {
   parentName: string;
@@ -82,13 +87,13 @@ export function ContactPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    
+
     if (!validateForm()) {
       return;
     }
 
     setIsSubmitting(true);
-    
+
     try {
       await new Promise(resolve => setTimeout(resolve, 2000));
       setIsSubmitted(true);
@@ -167,7 +172,7 @@ export function ContactPage() {
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.5 }}
           >
-            <motion.div 
+            <motion.div
               className="flex justify-center mb-6"
               initial={{ scale: 0 }}
               animate={{ scale: 1 }}
@@ -182,7 +187,7 @@ export function ContactPage() {
               We've received your inquiry and will contact you within 24 hours to discuss how AboveCodes can help your child excel in their learning journey.
             </p>
             <div className="flex gap-4 justify-center">
-              <Button 
+              <Button
                 onClick={() => setIsSubmitted(false)}
                 className="bg-blue-600 hover:bg-blue-700 text-white rounded-full px-8"
               >
@@ -199,7 +204,7 @@ export function ContactPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 pt-24 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Header */}
-        <motion.div 
+        <motion.div
           className="text-center mb-16"
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -315,7 +320,7 @@ export function ContactPage() {
                 <div className="grid md:grid-cols-2 gap-6">
                   <div>
                     <Label htmlFor="childAge">Child's Age *</Label>
-                    <Select value={formData.childAge} onValueChange={(value) => handleInputChange('childAge', value)}>
+                    <Select value={formData.childAge} onValueChange={(value: string) => handleInputChange('childAge', value)}>
                       <SelectTrigger className="mt-2">
                         <SelectValue placeholder="Select age group" />
                       </SelectTrigger>
@@ -334,7 +339,7 @@ export function ContactPage() {
 
                   <div>
                     <Label htmlFor="program">Program Interest *</Label>
-                    <Select value={formData.program} onValueChange={(value) => handleInputChange('program', value)}>
+                    <Select value={formData.program} onValueChange={(value: string) => handleInputChange('program', value)}>
                       <SelectTrigger className="mt-2">
                         <SelectValue placeholder="Select program" />
                       </SelectTrigger>
@@ -355,7 +360,7 @@ export function ContactPage() {
                 <div className="grid md:grid-cols-1 gap-6">
                   <div>
                     <Label htmlFor="package">Preferred Package</Label>
-                    <Select value={formData.package} onValueChange={(value) => handleInputChange('package', value)}>
+                    <Select value={formData.package} onValueChange={(value: string) => handleInputChange('package', value)}>
                       <SelectTrigger className="mt-2">
                         <SelectValue placeholder="Select package (optional)" />
                       </SelectTrigger>
@@ -387,8 +392,8 @@ export function ContactPage() {
                   />
                 </div>
 
-                <Button 
-                  type="submit" 
+                <Button
+                  type="submit"
                   disabled={isSubmitting}
                   className="w-full text-lg bg-blue-600 hover:bg-blue-700 text-white rounded-full py-6"
                 >
@@ -417,7 +422,7 @@ export function ContactPage() {
               transition={{ duration: 0.6, delay: 0.2 }}
             >
               <h3 className="text-xl font-clash mb-6 text-gray-900">Contact Information</h3>
-              
+
               <div className="space-y-6">
                 <div className="flex items-start gap-4">
                   <div className="bg-blue-100 p-3 rounded-xl flex-shrink-0">
@@ -460,7 +465,7 @@ export function ContactPage() {
               transition={{ duration: 0.6, delay: 0.3 }}
             >
               <h3 className="text-xl font-clash mb-4">Office Hours</h3>
-              
+
               <div className="space-y-4">
                 <div className="flex items-start gap-3">
                   <Clock className="h-5 w-5 flex-shrink-0 mt-0.5" />
@@ -469,7 +474,7 @@ export function ContactPage() {
                     <p className="text-blue-100">9:00 AM - 6:00 PM</p>
                   </div>
                 </div>
-                
+
                 <div className="flex items-start gap-3">
                   <Clock className="h-5 w-5 flex-shrink-0 mt-0.5" />
                   <div>

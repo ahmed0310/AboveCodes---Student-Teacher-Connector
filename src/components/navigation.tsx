@@ -28,12 +28,13 @@ export function Navigation({ onNavigate }: NavigationProps) {
     { name: "About", href: "#about" },
     { name: "Programs", href: "#programs" },
     { name: "Why Choose Us", href: "#why-choose" },
-    { name: "Contact", href: "#", page: "contact" as Page }
+    { name: "Contact", href: "#contactsection" }
   ];
 
   return (
     <nav className="bg-white/95 backdrop-blur-sm border-b border-gray-200 sticky top-0 z-50 w-full">
-      <style dangerouslySetInnerHTML={{__html: `
+      <style dangerouslySetInnerHTML={{
+        __html: `
         /* CRITICAL: Override Tailwind's hidden class - highest specificity */
         nav .nav-desktop-links-container,
         nav .nav-desktop-links-container.hidden {
@@ -41,14 +42,14 @@ export function Navigation({ onNavigate }: NavigationProps) {
           visibility: visible !important;
           opacity: 1 !important;
         }
-        
+
         nav .nav-desktop-cta-container,
         nav .nav-desktop-cta-container.hidden {
           display: flex !important;
           visibility: visible !important;
           opacity: 1 !important;
         }
-        
+
         @media screen and (min-width: 768px) {
           nav .nav-desktop-links-container,
           nav .nav-desktop-links-container.hidden {
@@ -88,10 +89,10 @@ export function Navigation({ onNavigate }: NavigationProps) {
           }
         }
       `}} />
-      <div className="container mx-auto px-4 w-full max-w-7xl">
+      <div className="container mx-auto px-4 max-w-7xl">
         <div className="flex items-center justify-between h-16 w-full" style={{ position: 'relative' }}>
           {/* Logo */}
-          <motion.div 
+          <motion.div
             className="flex items-center gap-2 flex-shrink-0"
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -105,7 +106,7 @@ export function Navigation({ onNavigate }: NavigationProps) {
           </motion.div>
 
           {/* Desktop Navigation Links */}
-          <div 
+          <div
             className="nav-desktop-links-container"
             style={{
               flex: '1',
@@ -147,7 +148,7 @@ export function Navigation({ onNavigate }: NavigationProps) {
                 }}
               >
                 {link.name}
-                <span 
+                <span
                   style={{
                     position: 'absolute',
                     bottom: '-0.25rem',
@@ -169,7 +170,7 @@ export function Navigation({ onNavigate }: NavigationProps) {
           </div>
 
           {/* Desktop CTA Button */}
-          <div 
+          <div
             className="nav-desktop-cta-container"
             style={{
               alignItems: 'center',
@@ -182,7 +183,7 @@ export function Navigation({ onNavigate }: NavigationProps) {
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
             >
-              <Button 
+              <Button
                 onClick={() => onNavigate && onNavigate("contact")}
                 className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-6"
               >
@@ -218,7 +219,7 @@ export function Navigation({ onNavigate }: NavigationProps) {
 
         {/* Mobile Navigation */}
         {isOpen && isMobile && (
-          <motion.div 
+          <motion.div
             className="py-4 border-t border-gray-200"
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
@@ -243,7 +244,7 @@ export function Navigation({ onNavigate }: NavigationProps) {
                 </a>
               ))}
               <div className="flex flex-col gap-3 pt-4 border-t border-gray-200">
-                <Button 
+                <Button
                   className="bg-orange-500 hover:bg-orange-600 text-white"
                   onClick={() => {
                     setIsOpen(false);
