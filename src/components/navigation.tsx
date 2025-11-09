@@ -28,7 +28,7 @@ export function Navigation({ onNavigate }: NavigationProps) {
     { name: "About", href: "#about" },
     { name: "Programs", href: "#programs" },
     { name: "Why Choose Us", href: "#why-choose" },
-    { name: "Contact", href: "#contactsection" }
+    { name: "Contact", href: "#contactsection"},
   ];
 
   return (
