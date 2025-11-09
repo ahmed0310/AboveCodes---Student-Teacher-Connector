@@ -8,6 +8,7 @@ import { Label } from './ui/label';
 import { Card } from './ui/card';
 import { motion } from 'motion/react';
 import styles from './contact-section.module.css';
+import React from 'react';
 
 interface FormData {
   parentName: string;

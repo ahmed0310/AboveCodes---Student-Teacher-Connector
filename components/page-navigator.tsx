@@ -2,6 +2,7 @@ import { motion } from "motion/react";
 import { Button } from "./ui/button";
 import { Card } from "./ui/card";
 import { Home, Code, Calculator, Grid3x3, Palette } from "lucide-react";
+import React from 'react';
 
 type Page = "home" | "coding" | "math" | "abacus" | "uxui";
 
