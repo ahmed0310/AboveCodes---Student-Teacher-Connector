@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api/api';
 import { Button } from '../../components/ui/button';
-import { LogOut } from 'lucide-react';
+import { LogOut, FileText } from 'lucide-react';
+import { ReportGenerator } from '../../components/ReportGenerator';
 
 export function AdminDashboard() {
   const navigate = useNavigate();
@@ -10,6 +11,10 @@ export function AdminDashboard() {
   const [stats, setStats] = useState<any>({});
   const [teachers, setTeachers] = useState([]);
   const [complaints, setComplaints] = useState([]);
+  const [enrollments, setEnrollments] = useState([]);
+  const [teacherReportData, setTeacherReportData] = useState<any>(null);
+  const [complaintReportData, setComplaintReportData] = useState<any>(null);
+  const [enrollmentReportData, setEnrollmentReportData] = useState<any>(null);
 
   useEffect(() => {
     const userData = localStorage.getItem('study_buddy_user');
@@ -65,6 +70,54 @@ export function AdminDashboard() {
     navigate('/');
   };
 
+  const loadTeacherReport = async () => {
+    try {
+      const response = await api.get('/admin/reports/teachers');
+      setTeacherReportData({
+        title: 'Teacher Approval Report',
+        subtitle: `Generated on ${new Date().toLocaleDateString()}`,
+        columns: response.data.columns,
+        data: response.data.data,
+        summary: response.data.summary
+      });
+    } catch (error) {
+      console.error('Error loading teacher report:', error);
+      alert('Failed to load teacher report');
+    }
+  };
+
+  const loadComplaintReport = async () => {
+    try {
+      const response = await api.get('/admin/reports/complaints');
+      setComplaintReportData({
+        title: 'Complaints Resolution Report',
+        subtitle: `Generated on ${new Date().toLocaleDateString()}`,
+        columns: response.data.columns,
+        data: response.data.data,
+        summary: response.data.summary
+      });
+    } catch (error) {
+      console.error('Error loading complaint report:', error);
+      alert('Failed to load complaint report');
+    }
+  };
+
+  const loadEnrollmentReport = async () => {
+    try {
+      const response = await api.get('/admin/reports/enrollments');
+      setEnrollmentReportData({
+        title: 'Student Enrollment Report',
+        subtitle: `Generated on ${new Date().toLocaleDateString()}`,
+        columns: response.data.columns,
+        data: response.data.data,
+        summary: response.data.summary
+      });
+    } catch (error) {
+      console.error('Error loading enrollment report:', error);
+      alert('Failed to load enrollment report');
+    }
+  };
+
   if (!user) return null;
 
   return (
@@ -72,9 +125,14 @@ export function AdminDashboard() {
       <div className="mx-auto max-w-6xl space-y-8">
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-          <Button onClick={handleLogout} variant="outline" className="flex items-center gap-2">
-            <LogOut className="w-4 h-4" /> Logout
-          </Button>
+          <div className="flex items-center gap-3">
+            <Button onClick={() => navigate('/reports')} variant="outline" className="flex items-center gap-2">
+              <FileText className="w-4 h-4" /> Reports
+            </Button>
+            <Button onClick={handleLogout} variant="outline" className="flex items-center gap-2">
+              <LogOut className="w-4 h-4" /> Logout
+            </Button>
+          </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
@@ -100,7 +158,58 @@ export function AdminDashboard() {
           </div>
         </div>
 
-        <h2 id="teachers" className="text-2xl font-bold font-clash text-gray-900 mb-6">Teacher Approvals</h2>
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2">
+              <FileText className="w-6 h-6 text-blue-600" />
+              <h2 className="text-2xl font-bold text-gray-900">Reports</h2>
+            </div>
+            <Button onClick={() => navigate('/reports')} className="bg-blue-600 hover:bg-blue-700 text-white">
+              View Full Reports Center
+            </Button>
+          </div>
+          <p className="text-gray-600 mb-6">Generate detailed reports for export in PDF or CSV format with summary statistics and timestamps.</p>
+          
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <h3 className="font-semibold text-gray-900 mb-3">Teacher Approval Report</h3>
+              <p className="text-sm text-gray-600 mb-4">Summary of all teacher applications and approval status.</p>
+              {teacherReportData ? (
+                <ReportGenerator reportData={teacherReportData} />
+              ) : (
+                <Button onClick={loadTeacherReport} variant="outline" className="w-full">
+                  Generate Report
+                </Button>
+              )}
+            </div>
+
+            <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <h3 className="font-semibold text-gray-900 mb-3">Complaints Report</h3>
+              <p className="text-sm text-gray-600 mb-4">Summary of all student complaints and resolution status.</p>
+              {complaintReportData ? (
+                <ReportGenerator reportData={complaintReportData} />
+              ) : (
+                <Button onClick={loadComplaintReport} variant="outline" className="w-full">
+                  Generate Report
+                </Button>
+              )}
+            </div>
+
+            <div className="bg-white p-4 rounded-lg border border-gray-200">
+              <h3 className="font-semibold text-gray-900 mb-3">Enrollment Report</h3>
+              <p className="text-sm text-gray-600 mb-4">Summary of all student enrollments and course applications.</p>
+              {enrollmentReportData ? (
+                <ReportGenerator reportData={enrollmentReportData} />
+              ) : (
+                <Button onClick={loadEnrollmentReport} variant="outline" className="w-full">
+                  Generate Report
+                </Button>
+              )}
+            </div>
+          </div>
+        </div>
+
+        <h2 id="teachers" className="text-2xl font-bold font-clash text-gray-900 mb-6 mt-8">Teacher Approvals</h2>
         <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-12">
           <table className="w-full text-left border-collapse">
             <thead>

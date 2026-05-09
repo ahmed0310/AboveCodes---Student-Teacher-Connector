@@ -7,6 +7,7 @@ import { Register } from './pages/auth/Register';
 import { StudentDashboard } from './pages/dashboard/StudentDashboard';
 import { TeacherDashboard } from './pages/dashboard/TeacherDashboard';
 import { AdminDashboard } from './pages/dashboard/AdminDashboard';
+import { ReportsPage } from './pages/dashboard/Reports';
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
         <Route path="/student" element={<StudentDashboard />} />
         <Route path="/teacher" element={<TeacherDashboard />} />
         <Route path="/admin" element={<AdminDashboard />} />
+        <Route path="/reports" element={<ReportsPage />} />
       </Routes>
     </Router>
   );
