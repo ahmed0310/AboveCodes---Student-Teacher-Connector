@@ -8,9 +8,10 @@ type Page = "home" | "coding" | "math" | "abacus" | "uxui" | "contact";
 
 interface NavigationProps {
   onNavigate?: (page: Page) => void;
+  onPortalAccess?: () => void;
 }
 
-export function Navigation({ onNavigate }: NavigationProps) {
+export function Navigation({ onNavigate, onPortalAccess }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const navLinks = [
@@ -89,7 +90,13 @@ export function Navigation({ onNavigate }: NavigationProps) {
                 transition={{ duration: 0.5 }}
               >
                 <Button 
-                  onClick={() => onNavigate && onNavigate("contact")}
+                  onClick={() => {
+                    if (onPortalAccess) {
+                      onPortalAccess();
+                      return;
+                    }
+                    onNavigate && onNavigate("contact");
+                  }}
                   className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-6"
                 >
                   Get Started
@@ -151,6 +158,10 @@ export function Navigation({ onNavigate }: NavigationProps) {
                   className="bg-orange-500 hover:bg-orange-600 text-white"
                   onClick={() => {
                     setIsOpen(false);
+                    if (onPortalAccess) {
+                      onPortalAccess();
+                      return;
+                    }
                     onNavigate && onNavigate("contact");
                   }}
                 >

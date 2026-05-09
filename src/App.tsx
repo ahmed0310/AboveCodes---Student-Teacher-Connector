@@ -1,43 +1,26 @@
-import React from "react";
-import { Navigation } from "./components/navigation";
-import { FeaturesBanner } from "./components/features-banner";
-import { HeroSection } from "./components/hero-section";
-import { AboutSection } from "./components/about-section";
-import { ProgramsSection } from "./components/programs-section";
-import { WhyChooseSection } from "./components/why-choose-section";
-import { TestimonialsSection } from "./components/testimonials-section";
-import { CTASection } from "./components/cta-section";
-import { Footer } from "./components/footer";
-import { ContactPage } from "./components/contact-page";
+import React from 'react';
+import { BrowserRouter as Router, Navigate, Route, Routes } from 'react-router-dom';
+import { Landing } from './pages/Landing';
+import { SignInRole } from './pages/auth/SignInRole';
+import { Login } from './pages/auth/Login';
+import { Register } from './pages/auth/Register';
+import { StudentDashboard } from './pages/dashboard/StudentDashboard';
+import { TeacherDashboard } from './pages/dashboard/TeacherDashboard';
+import { AdminDashboard } from './pages/dashboard/AdminDashboard';
 
 export default function App() {
   return (
-    <div className="min-h-screen bg-white">
-      <Navigation />
-      <FeaturesBanner />
-      <main>
-        <HeroSection />
-
-        <section id="about">
-          <AboutSection />
-        </section>
-
-        <section id="programs">
-          <ProgramsSection />
-        </section>
-
-        <section id="why-choose">
-          <WhyChooseSection />
-        </section>
-
-        <section id="contactsection">
-          <ContactPage />
-        </section>
-
-        <TestimonialsSection />
-        <CTASection />
-      </main>
-      <Footer />
-    </div>
+    <Router>
+      <Routes>
+        <Route path="/" element={<Landing />} />
+        <Route path="/signin" element={<SignInRole />} />
+        <Route path="/signup" element={<Register />} />
+        <Route path="/register" element={<Navigate to="/signup" replace />} />
+        <Route path="/login" element={<Login />} />
+        <Route path="/student" element={<StudentDashboard />} />
+        <Route path="/teacher" element={<TeacherDashboard />} />
+        <Route path="/admin" element={<AdminDashboard />} />
+      </Routes>
+    </Router>
   );
 }

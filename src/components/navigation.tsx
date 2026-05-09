@@ -8,9 +8,10 @@ type Page = "home" | "coding" | "math" | "abacus" | "uxui" | "contact";
 
 interface NavigationProps {
   onNavigate?: (page: Page) => void;
+  onPortalAccess?: () => void;
 }
 
-export function Navigation({ onNavigate }: NavigationProps) {
+export function Navigation({ onNavigate, onPortalAccess }: NavigationProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -182,7 +183,15 @@ export function Navigation({ onNavigate }: NavigationProps) {
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.5 }}
+              className="flex items-center gap-2"
             >
+              <Button
+                variant="outline"
+                onClick={() => onPortalAccess && onPortalAccess()}
+                className="hidden md:flex text-blue-600 border-blue-200 hover:bg-blue-50 rounded-full px-6"
+              >
+                Portal Login
+              </Button>
               <Button
                 onClick={() => onNavigate && onNavigate("contact")}
                 className="bg-orange-500 hover:bg-orange-600 text-white rounded-full px-6"
@@ -245,7 +254,17 @@ export function Navigation({ onNavigate }: NavigationProps) {
               ))}
               <div className="flex flex-col gap-3 pt-4 border-t border-gray-200">
                 <Button
-                  className="bg-orange-500 hover:bg-orange-600 text-white"
+                  variant="outline"
+                  className="w-full text-blue-600 border-blue-200 hover:bg-blue-50"
+                  onClick={() => {
+                    setIsOpen(false);
+                    onPortalAccess && onPortalAccess();
+                  }}
+                >
+                  Portal Login
+                </Button>
+                <Button
+                  className="bg-orange-500 hover:bg-orange-600 text-white w-full"
                   onClick={() => {
                     setIsOpen(false);
                     onNavigate && onNavigate("contact");
