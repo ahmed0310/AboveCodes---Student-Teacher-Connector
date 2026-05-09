@@ -8,6 +8,7 @@ import { StudentDashboard } from './pages/dashboard/StudentDashboard';
 import { TeacherDashboard } from './pages/dashboard/TeacherDashboard';
 import { AdminDashboard } from './pages/dashboard/AdminDashboard';
 import { ReportsPage } from './pages/dashboard/Reports';
+import { Phase4Features } from './pages/Phase4Features';
 
 export default function App() {
   return (
@@ -22,6 +23,7 @@ export default function App() {
         <Route path="/teacher" element={<TeacherDashboard />} />
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/reports" element={<ReportsPage />} />
+        <Route path="/phase4" element={<Phase4Features />} />
       </Routes>
     </Router>
   );

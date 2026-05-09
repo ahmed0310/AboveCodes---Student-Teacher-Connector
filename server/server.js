@@ -6,6 +6,7 @@ import authRoutes from './routes/auth.js';
 import studentRoutes from './routes/student.js';
 import teacherRoutes from './routes/teacher.js';
 import adminRoutes from './routes/admin.js';
+import phase4Routes from './routes/phase4.js';
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/student', studentRoutes);
 app.use('/api/teacher', teacherRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/phase4', phase4Routes);
 
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', message: 'Study Buddy Server is running' });

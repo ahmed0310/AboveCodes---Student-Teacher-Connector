@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api/api';
 import { Button } from '../../components/ui/button';
-import { LogOut, FileText } from 'lucide-react';
+import { LogOut, FileText, Zap } from 'lucide-react';
 import { ReportGenerator } from '../../components/ReportGenerator';
 
 export function AdminDashboard() {
@@ -126,6 +126,9 @@ export function AdminDashboard() {
         <div className="flex items-center justify-between">
           <h1 className="text-2xl font-bold">Admin Dashboard</h1>
           <div className="flex items-center gap-3">
+            <Button onClick={() => navigate('/phase4')} className="flex items-center gap-2 bg-purple-600 hover:bg-purple-700 text-white">
+              <Zap className="w-4 h-4" /> Phase 4
+            </Button>
             <Button onClick={() => navigate('/reports')} variant="outline" className="flex items-center gap-2">
               <FileText className="w-4 h-4" /> Reports
             </Button>
