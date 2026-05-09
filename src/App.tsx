@@ -9,6 +9,7 @@ import { TeacherDashboard } from './pages/dashboard/TeacherDashboard';
 import { AdminDashboard } from './pages/dashboard/AdminDashboard';
 import { ReportsPage } from './pages/dashboard/Reports';
 import { Phase4Features } from './pages/Phase4Features';
+import { Phase5Dashboard } from './pages/Phase5Dashboard';
 
 export default function App() {
   return (
@@ -24,6 +25,7 @@ export default function App() {
         <Route path="/admin" element={<AdminDashboard />} />
         <Route path="/reports" element={<ReportsPage />} />
         <Route path="/phase4" element={<Phase4Features />} />
+        <Route path="/phase5" element={<Phase5Dashboard />} />
       </Routes>
     </Router>
   );
