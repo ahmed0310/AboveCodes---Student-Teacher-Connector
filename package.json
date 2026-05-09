@@ -37,6 +37,7 @@
     "axios": "^1.6.8",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.0.0",
+    "express": "^5.2.1",
     "jspdf": "^4.2.1",
     "lucide-react": "^0.487.0",
     "motion": "^11.11.17",
