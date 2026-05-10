@@ -51,6 +51,7 @@ router.get('/requests', async (req, res) => {
   }
 });
 
+// ── Accept/Reject — uses STORED PROCEDURE (nested call) ─────
 router.put('/request/status', async (req, res) => {
   const { application_id, status } = req.body;
   
@@ -59,42 +60,45 @@ router.put('/request/status', async (req, res) => {
   }
 
   try {
-    const [requests] = await pool.execute(`
-      SELECT * FROM course_applications
-      WHERE application_id = ? AND teacher_id = ?
-    `, [application_id, req.user.userId]);
-
+    // Verify ownership
+    const [requests] = await pool.execute(
+      'SELECT * FROM course_applications WHERE application_id = ? AND teacher_id = ?',
+      [application_id, req.user.userId]
+    );
     if (requests.length === 0) {
       return res.status(403).json({ error: 'Not authorized for this request' });
     }
 
-    await pool.execute(
-      'UPDATE course_applications SET status = ?, responded_at = NOW() WHERE application_id = ?',
-      [status, application_id]
-    );
+    // Call stored procedure (which internally calls proc_enroll_student if approved)
+    await pool.query('CALL proc_process_application(?, ?, @result)', [application_id, status]);
+    const [rows] = await pool.query('SELECT @result AS message');
+    const msg = rows[0]?.message || 'Done';
 
-    if (status === 'approved') {
-      const app = requests[0];
-      await pool.execute(
-        `INSERT INTO enrollments (student_id, course_id, teacher_id, approved_application_id)
-         VALUES (?, ?, ?, ?)
-         ON DUPLICATE KEY UPDATE enrolled_at = enrolled_at`,
-        [app.student_id, app.course_id, app.teacher_id, app.application_id]
-      );
-    }
-
+    // Reject other pending apps for same student+course if approved
     if (status === 'approved') {
       await pool.execute(
-        `UPDATE course_applications
-         SET status = 'rejected', responded_at = NOW()
+        `UPDATE course_applications SET status = 'rejected', responded_at = NOW()
          WHERE student_id = ? AND course_id = ? AND application_id <> ? AND status = 'pending'`,
         [requests[0].student_id, requests[0].course_id, application_id]
       );
     }
 
-    res.json({ message: `Request ${status} successfully` });
+    if (msg.startsWith('ERROR')) return res.status(400).json({ error: msg });
+    res.json({ message: msg });
   } catch (error) {
+    console.error('request/status error:', error);
     res.status(500).json({ error: 'Failed to update request status' });
+  }
+});
+
+// ── Course enrollment report — uses CURSOR-BASED PROCEDURE ──
+router.get('/course-report', async (req, res) => {
+  try {
+    const [rows] = await pool.query('CALL proc_course_enrollment_report(?)', [req.user.userId]);
+    res.json(rows[0] || []);
+  } catch (error) {
+    console.error('course-report error:', error);
+    res.status(500).json({ error: 'Failed to generate course report' });
   }
 });
 

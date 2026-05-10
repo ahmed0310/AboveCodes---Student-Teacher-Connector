@@ -2,7 +2,41 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../api/api';
 import { Button } from '../../components/ui/button';
-import { LogOut } from 'lucide-react';
+import {
+  ShieldCheck, LogOut, Users, BookOpen, Clock, AlertTriangle,
+  CheckCircle2, XCircle, GraduationCap, TrendingUp, FileWarning, Gavel
+} from 'lucide-react';
+
+function SectionHeader({ icon: Icon, title, subtitle, accent }: { icon: any; title: string; subtitle?: string; accent: string }) {
+  return (
+    <div className="flex items-center gap-4 mb-6">
+      <div className={`flex h-11 w-11 items-center justify-center rounded-xl ${accent} transition-transform duration-300 hover:scale-110`}>
+        <Icon className="h-5 w-5" />
+      </div>
+      <div>
+        <h2 className="font-clash text-xl font-bold text-slate-900">{title}</h2>
+        {subtitle && <p className="text-sm text-slate-500">{subtitle}</p>}
+      </div>
+    </div>
+  );
+}
+
+function StatusBadge({ status }: { status: string }) {
+  const config: Record<string, { bg: string; text: string; icon: any }> = {
+    approved: { bg: 'bg-emerald-100', text: 'text-emerald-700', icon: CheckCircle2 },
+    rejected: { bg: 'bg-red-100', text: 'text-red-700', icon: XCircle },
+    pending: { bg: 'bg-amber-100', text: 'text-amber-700', icon: Clock },
+    resolved: { bg: 'bg-emerald-100', text: 'text-emerald-700', icon: CheckCircle2 },
+  };
+  const c = config[status] || config.pending;
+  const BadgeIcon = c.icon;
+  return (
+    <span className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${c.bg} ${c.text}`}>
+      <BadgeIcon className="h-3 w-3" />
+      <span className="capitalize">{status}</span>
+    </span>
+  );
+}
 
 export function AdminDashboard() {
   const navigate = useNavigate();
@@ -68,105 +102,157 @@ export function AdminDashboard() {
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-slate-50 p-6">
-      <div className="mx-auto max-w-6xl space-y-8">
-        <div className="flex items-center justify-between">
-          <h1 className="text-2xl font-bold">Admin Dashboard</h1>
-          <Button onClick={handleLogout} variant="outline" className="flex items-center gap-2">
-            <LogOut className="w-4 h-4" /> Logout
+    <div className="min-h-screen bg-slate-50">
+      {/* ─── HEADER ─── */}
+      <header className="sticky top-0 z-40 glass-dark border-b border-slate-700/30 shadow-lg">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-slate-600 to-slate-800 text-white shadow-lg shadow-slate-800/30 ring-2 ring-slate-500/20">
+              <ShieldCheck className="h-5 w-5" />
+            </div>
+            <div>
+              <h1 className="font-clash text-lg font-bold text-white">Admin Panel</h1>
+              <p className="text-xs text-slate-400">Platform Administration</p>
+            </div>
+          </div>
+          <Button onClick={handleLogout} variant="outline" className="flex items-center gap-2 rounded-xl border-slate-600 text-slate-300 hover:text-red-400 hover:border-red-400/50 transition-all">
+            <LogOut className="w-4 h-4" />
+            Logout
           </Button>
         </div>
+      </header>
 
-        <div className="grid grid-cols-1 md:grid-cols-5 gap-6">
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center">
-            <p className="text-sm font-medium text-gray-500 mb-1">Total Students</p>
-            <p className="text-3xl font-bold text-gray-900">{stats.students || 0}</p>
-          </div>
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center">
-            <p className="text-sm font-medium text-gray-500 mb-1">Total Teachers</p>
-            <p className="text-3xl font-bold text-gray-900">{stats.teachers || 0}</p>
-          </div>
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center">
-            <p className="text-sm font-medium text-gray-500 mb-1">Pending Teachers</p>
-            <p className="text-3xl font-bold text-amber-600">{stats.pendingTeachers || 0}</p>
-          </div>
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center">
-            <p className="text-sm font-medium text-gray-500 mb-1">Total Courses</p>
-            <p className="text-3xl font-bold text-gray-900">{stats.courses || 0}</p>
-          </div>
-          <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex flex-col items-center justify-center">
-            <p className="text-sm font-medium text-gray-500 mb-1">Pending Complaints</p>
-            <p className="text-3xl font-bold text-red-600">{stats.pendingComplaints || 0}</p>
-          </div>
+      {/* Accent bar */}
+      <div className="h-1 bg-gradient-to-r from-slate-600 via-blue-600 to-slate-600" />
+
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 space-y-8">
+        {/* ─── STATS ─── */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 animate-fade-in-up">
+          {[
+            { label: 'Total Students', value: stats.students || 0, icon: GraduationCap, color: 'stat-card-blue', iconBg: 'bg-blue-100 text-blue-600', valueCls: 'text-slate-900' },
+            { label: 'Total Teachers', value: stats.teachers || 0, icon: Users, color: 'stat-card-violet', iconBg: 'bg-violet-100 text-violet-600', valueCls: 'text-slate-900' },
+            { label: 'Pending Teachers', value: stats.pendingTeachers || 0, icon: Clock, color: 'stat-card-amber', iconBg: 'bg-amber-100 text-amber-600', valueCls: 'text-amber-600' },
+            { label: 'Total Courses', value: stats.courses || 0, icon: BookOpen, color: 'stat-card-emerald', iconBg: 'bg-emerald-100 text-emerald-600', valueCls: 'text-slate-900' },
+            { label: 'Open Complaints', value: stats.pendingComplaints || 0, icon: AlertTriangle, color: 'stat-card-red', iconBg: 'bg-red-100 text-red-600', valueCls: 'text-red-600' },
+          ].map(s => (
+            <div key={s.label} className={`stat-card ${s.color} card-hover bg-white rounded-2xl border border-slate-100 p-5 shadow-sm`}>
+              <div className="flex items-center justify-between mb-3">
+                <div className={`flex h-10 w-10 items-center justify-center rounded-xl ${s.iconBg}`}>
+                  <s.icon className="h-5 w-5" />
+                </div>
+                <TrendingUp className="h-4 w-4 text-slate-300" />
+              </div>
+              <p className={`text-2xl font-bold font-clash ${s.valueCls}`}>{s.value}</p>
+              <p className="text-xs text-slate-500 mt-1">{s.label}</p>
+            </div>
+          ))}
         </div>
 
-        <h2 id="teachers" className="text-2xl font-bold font-clash text-gray-900 mb-6">Teacher Approvals</h2>
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-12">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="px-6 py-4 font-medium text-gray-500">Teacher Name</th>
-                <th className="px-6 py-4 font-medium text-gray-500">Email</th>
-                <th className="px-6 py-4 font-medium text-gray-500">Status</th>
-                <th className="px-6 py-4 font-medium text-gray-500 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {teachers.map((t: any) => (
-                <tr key={t.teacher_id}>
-                  <td className="px-6 py-4 font-medium text-gray-900">{t.full_name}</td>
-                  <td className="px-6 py-4 text-gray-500">{t.email}</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium ${t.approval_status === 'approved' ? 'bg-green-100 text-green-800' : t.approval_status === 'rejected' ? 'bg-red-100 text-red-800' : 'bg-yellow-100 text-yellow-800'}`}>
-                      {t.approval_status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right space-x-2">
-                    <Button size="sm" onClick={() => handleTeacherApproval(t.teacher_id, 'approved')} className="bg-green-500 hover:bg-green-600 text-white">Approve</Button>
-                    <Button size="sm" onClick={() => handleTeacherApproval(t.teacher_id, 'rejected')} variant="outline" className="text-red-600 border-red-200 hover:bg-red-50">Reject</Button>
-                  </td>
+        {/* ─── TEACHER APPROVALS ─── */}
+        <section className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm animate-fade-in-up delay-100">
+          <SectionHeader icon={Users} title="Teacher Approvals" subtitle="Review and manage teacher registrations" accent="bg-slate-200 text-slate-700" />
+          <div className="overflow-x-auto rounded-xl border border-slate-100">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="bg-slate-900 text-white">
+                  <th className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider rounded-tl-xl">Teacher</th>
+                  <th className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider">Email</th>
+                  <th className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider">Status</th>
+                  <th className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-right rounded-tr-xl">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {teachers.map((t: any) => (
+                  <tr key={t.teacher_id} className="table-row-hover">
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-gradient-to-br from-slate-600 to-slate-800 text-white text-xs font-bold shadow-sm">
+                          {t.full_name?.charAt(0).toUpperCase()}
+                        </div>
+                        <span className="font-medium text-slate-900 text-sm">{t.full_name}</span>
+                      </div>
+                    </td>
+                    <td className="px-5 py-4 text-sm text-slate-500">{t.email}</td>
+                    <td className="px-5 py-4"><StatusBadge status={t.approval_status} /></td>
+                    <td className="px-5 py-4 text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Button size="sm" onClick={() => handleTeacherApproval(t.teacher_id, 'approved')} className="bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg text-xs shadow-sm">
+                          <CheckCircle2 className="h-3.5 w-3.5 mr-1" />
+                          Approve
+                        </Button>
+                        <Button size="sm" onClick={() => handleTeacherApproval(t.teacher_id, 'rejected')} variant="outline" className="text-red-600 border-red-200 hover:bg-red-50 rounded-lg text-xs">
+                          <XCircle className="h-3.5 w-3.5 mr-1" />
+                          Reject
+                        </Button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+                {teachers.length === 0 && (
+                  <tr>
+                    <td colSpan={4} className="px-5 py-12 text-center text-slate-400">
+                      <Users className="h-10 w-10 mx-auto mb-3 opacity-40" />
+                      <p className="font-medium">No teacher registrations</p>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
 
-        <h2 id="complaints" className="text-2xl font-bold font-clash text-gray-900 mb-6">Student Complaints</h2>
-        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden mb-12">
-          <table className="w-full text-left border-collapse">
-            <thead>
-              <tr className="bg-gray-50 border-b border-gray-200">
-                <th className="px-6 py-4 font-medium text-gray-500">Student</th>
-                <th className="px-6 py-4 font-medium text-gray-500">Against Teacher</th>
-                <th className="px-6 py-4 font-medium text-gray-500">Course</th>
-                <th className="px-6 py-4 font-medium text-gray-500">Description</th>
-                <th className="px-6 py-4 font-medium text-gray-500">Status</th>
-                <th className="px-6 py-4 font-medium text-gray-500 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-200">
-              {complaints.map((c: any) => (
-                <tr key={c.complaint_id}>
-                  <td className="px-6 py-4 font-medium text-gray-900">{c.student_name}</td>
-                  <td className="px-6 py-4 text-gray-600">{c.teacher_name || 'N/A'}</td>
-                  <td className="px-6 py-4 text-gray-600">{c.course_title}</td>
-                  <td className="px-6 py-4 text-gray-500 max-w-sm">{c.description}</td>
-                  <td className="px-6 py-4">
-                    <span className={`px-3 py-1 rounded-full text-xs font-medium capitalize ${c.status === 'resolved' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`}>
-                      {c.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-right">
-                    {c.status === 'pending' && (
-                      <Button size="sm" onClick={() => handleResolveComplaint(c.complaint_id)} className="bg-blue-600 hover:bg-blue-700 text-white">Mark Resolved</Button>
-                    )}
-                  </td>
+        {/* ─── COMPLAINTS ─── */}
+        <section className="bg-white rounded-2xl border border-slate-100 p-6 shadow-sm animate-fade-in-up delay-200">
+          <SectionHeader icon={FileWarning} title="Student Complaints" subtitle="Manage and resolve platform issues" accent="bg-red-100 text-red-600" />
+          <div className="overflow-x-auto rounded-xl border border-slate-100">
+            <table className="w-full text-left">
+              <thead>
+                <tr className="bg-slate-900 text-white">
+                  <th className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider rounded-tl-xl">Student</th>
+                  <th className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider">Against</th>
+                  <th className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider">Course</th>
+                  <th className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider hidden lg:table-cell">Description</th>
+                  <th className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider">Status</th>
+                  <th className="px-5 py-3.5 text-xs font-semibold uppercase tracking-wider text-right rounded-tr-xl">Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-
+              </thead>
+              <tbody className="divide-y divide-slate-100">
+                {complaints.map((c: any) => (
+                  <tr key={c.complaint_id} className="table-row-hover">
+                    <td className="px-5 py-4">
+                      <div className="flex items-center gap-3">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-100 text-blue-600 text-xs font-bold">
+                          {c.student_name?.charAt(0).toUpperCase()}
+                        </div>
+                        <span className="font-medium text-slate-900 text-sm">{c.student_name}</span>
+                      </div>
+                    </td>
+                    <td className="px-5 py-4 text-sm text-slate-600">{c.teacher_name || 'N/A'}</td>
+                    <td className="px-5 py-4 text-sm text-slate-600">{c.course_title}</td>
+                    <td className="px-5 py-4 text-sm text-slate-500 max-w-xs truncate hidden lg:table-cell">{c.description}</td>
+                    <td className="px-5 py-4"><StatusBadge status={c.status} /></td>
+                    <td className="px-5 py-4 text-right">
+                      {c.status === 'pending' && (
+                        <Button size="sm" onClick={() => handleResolveComplaint(c.complaint_id)} className="bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-xs shadow-sm flex items-center gap-1.5">
+                          <Gavel className="h-3.5 w-3.5" />
+                          Resolve
+                        </Button>
+                      )}
+                    </td>
+                  </tr>
+                ))}
+                {complaints.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="px-5 py-12 text-center text-slate-400">
+                      <FileWarning className="h-10 w-10 mx-auto mb-3 opacity-40" />
+                      <p className="font-medium">No complaints filed</p>
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </section>
       </div>
     </div>
   );

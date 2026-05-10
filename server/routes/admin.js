@@ -7,6 +7,7 @@ const router = express.Router();
 router.use(authenticateToken);
 router.use(requireRole(['admin']));
 
+// ── Teachers list ────────────────────────────────────────────
 router.get('/teachers', async (req, res) => {
   try {
     const [teachers] = await pool.execute(`
@@ -22,27 +23,27 @@ router.get('/teachers', async (req, res) => {
   }
 });
 
+// ── Approve/Reject teacher — uses STORED PROCEDURE ──────────
 router.put('/approve-teacher', async (req, res) => {
   const { teacher_id, decision, reason } = req.body;
   if (!['approved', 'rejected'].includes(decision)) {
     return res.status(400).json({ error: 'decision must be approved or rejected' });
   }
-  
   try {
-    await pool.execute(
-      'UPDATE teachers SET approval_status = ?, approved_by = ?, approved_at = NOW() WHERE teacher_id = ?',
-      [decision, req.user.userId, teacher_id]
-    );
-    await pool.execute(
-      'INSERT INTO teacher_approval_logs (teacher_id, admin_id, decision, reason) VALUES (?, ?, ?, ?)',
-      [teacher_id, req.user.userId, decision, reason || null]
-    );
-    res.json({ message: `Teacher ${decision} successfully` });
+    await pool.query('CALL proc_approve_teacher(?, ?, ?, ?, @result)', [
+      teacher_id, req.user.userId, decision, reason || 'No reason provided'
+    ]);
+    const [rows] = await pool.query('SELECT @result AS message');
+    const msg = rows[0]?.message || 'Done';
+    if (msg.startsWith('ERROR')) return res.status(400).json({ error: msg });
+    res.json({ message: msg });
   } catch (error) {
+    console.error('approve-teacher error:', error);
     res.status(500).json({ error: 'Failed to update teacher approval status' });
   }
 });
 
+// ── Complaints list ──────────────────────────────────────────
 router.get('/complaints', async (req, res) => {
   try {
     const [complaints] = await pool.execute(`
@@ -61,39 +62,61 @@ router.get('/complaints', async (req, res) => {
   }
 });
 
+// ── Resolve complaint — uses STORED PROCEDURE ────────────────
 router.put('/resolve-complaint', async (req, res) => {
   const { complaint_id, resolution_note } = req.body;
-  
   try {
-    await pool.execute(
-      `UPDATE complaints
-       SET status = 'resolved', resolved_by = ?, resolved_at = NOW(), resolution_note = ?
-       WHERE complaint_id = ?`,
-      [req.user.userId, resolution_note || null, complaint_id]
-    );
-    res.json({ message: 'Complaint resolved successfully' });
+    await pool.query('CALL proc_resolve_complaint(?, ?, ?, @result)', [
+      complaint_id, req.user.userId, resolution_note || 'Resolved by admin'
+    ]);
+    const [rows] = await pool.query('SELECT @result AS message');
+    const msg = rows[0]?.message || 'Done';
+    if (msg.startsWith('ERROR')) return res.status(400).json({ error: msg });
+    res.json({ message: msg });
   } catch (error) {
+    console.error('resolve-complaint error:', error);
     res.status(500).json({ error: 'Failed to resolve complaint' });
   }
 });
 
+// ── Dashboard stats — uses PACKAGE PROCEDURE ─────────────────
 router.get('/dashboard-stats', async (req, res) => {
   try {
-    const [studentCount] = await pool.execute('SELECT COUNT(*) as count FROM students');
-    const [teacherCount] = await pool.execute('SELECT COUNT(*) as count FROM teachers');
-    const [pendingTeacherCount] = await pool.execute(`SELECT COUNT(*) as count FROM teachers WHERE approval_status = 'pending'`);
-    const [courseCount] = await pool.execute('SELECT COUNT(*) as count FROM courses');
-    const [pendingComplaints] = await pool.execute('SELECT COUNT(*) as count FROM complaints WHERE status = "pending"');
-
+    const [rows] = await pool.query('CALL pkg_analytics_platform_overview()');
+    const stats = rows[0]?.[0] || {};
     res.json({
-      students: studentCount[0].count,
-      teachers: teacherCount[0].count,
-      pendingTeachers: pendingTeacherCount[0].count,
-      courses: courseCount[0].count,
-      pendingComplaints: pendingComplaints[0].count
+      students: stats.total_students || 0,
+      teachers: stats.total_teachers || 0,
+      pendingTeachers: stats.pending_teachers || 0,
+      courses: stats.active_courses || 0,
+      pendingComplaints: stats.open_complaints || 0,
+      enrollments: stats.total_enrollments || 0,
+      version: stats.version || '1.0.0'
     });
   } catch (error) {
+    console.error('dashboard-stats error:', error);
     res.status(500).json({ error: 'Failed to fetch stats' });
+  }
+});
+
+// ── Teacher report — uses CURSOR-BASED PROCEDURE ─────────────
+router.get('/teacher-report', async (req, res) => {
+  try {
+    const [rows] = await pool.query('CALL proc_generate_teacher_report()');
+    res.json(rows[0] || []);
+  } catch (error) {
+    console.error('teacher-report error:', error);
+    res.status(500).json({ error: 'Failed to generate teacher report' });
+  }
+});
+
+// ── Audit log ────────────────────────────────────────────────
+router.get('/audit-log', async (req, res) => {
+  try {
+    const [rows] = await pool.execute('SELECT * FROM audit_log ORDER BY performed_at DESC LIMIT 50');
+    res.json(rows);
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch audit log' });
   }
 });
 

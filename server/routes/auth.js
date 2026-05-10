@@ -1,5 +1,4 @@
 import express from 'express';
-import bcrypt from 'bcrypt';
 import jwt from 'jsonwebtoken';
 import path from 'path';
 import pool from '../config/db.js';
@@ -38,8 +37,8 @@ router.post('/register', registerUpload, async (req, res) => {
         return res.status(400).json({ error: 'Email already exists' });
       }
 
-      // Hash password
-      const hashedPassword = await bcrypt.hash(password, 10);
+      // Store password as plain text
+      const hashedPassword = password;
 
       const profilePhoto = req.file?.path || req.files?.profile_photo?.[0]?.path || null;
       const [userResult] = await connection.execute(
@@ -115,7 +114,7 @@ router.post('/login', async (req, res) => {
     }
 
     const user = users[0];
-    const passwordMatch = await bcrypt.compare(password, user.password_hash);
+    const passwordMatch = (password === user.password_hash);
 
     if (!passwordMatch) {
       return res.status(401).json({ error: 'Invalid credentials' });

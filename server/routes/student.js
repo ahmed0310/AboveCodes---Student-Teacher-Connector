@@ -168,4 +168,15 @@ router.get('/enrollments', async (req, res) => {
   }
 });
 
+// ── Student activity — uses PACKAGE PROCEDURE ────────────────
+router.get('/activity', async (req, res) => {
+  try {
+    const [rows] = await pool.query('CALL pkg_analytics_student_activity(?)', [req.user.userId]);
+    res.json(rows[0]?.[0] || {});
+  } catch (error) {
+    console.error('student activity error:', error);
+    res.status(500).json({ error: 'Failed to fetch activity' });
+  }
+});
+
 export default router;
